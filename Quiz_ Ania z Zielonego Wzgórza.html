@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz: Ania z Zielonego Wzgórza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAF2EC; --paper:#FFFDF8; --ink:#1E2B24; --muted:#56695D;
+  --gable:#2E6B4F; --gable-soft:#D5E7DC; --blossom:#F6D6DD; --blossom-ink:#8E3A52;
+  --wrong:#B23A48; --wrong-soft:#F7DADE; --line:#C9D9CE; --roof:#2E6B4F; --wall:#FFFFFF;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#142019; --paper:#1C2A22; --ink:#ECF2EE; --muted:#A9BDB0;
+    --gable:#7CC59E; --gable-soft:#24402F; --blossom:#4A2A33; --blossom-ink:#F3B8C6;
+    --wrong:#F08C98; --wrong-soft:#4A2329; --line:#30473A; --roof:#4F9C74; --wall:#DDE6E0;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#142019; --paper:#1C2A22; --ink:#ECF2EE; --muted:#A9BDB0;
+  --gable:#7CC59E; --gable-soft:#24402F; --blossom:#4A2A33; --blossom-ink:#F3B8C6;
+  --wrong:#F08C98; --wrong-soft:#4A2329; --line:#30473A; --roof:#4F9C74; --wall:#DDE6E0;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Alegreya Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:1.125rem; line-height:1.5;
+}
+main{max-width:640px;margin:0 auto;padding:1.25rem 1rem 3rem}
+h1,h2,.q-text{font-family:"Alegreya",Georgia,"Times New Roman",serif}
+h1{font-size:2.1rem;line-height:1.1;margin:.5rem 0 .25rem;font-weight:800}
+h2{font-size:1.6rem;margin:0 0 .5rem}
+p{margin:.4rem 0}
+.lead{color:var(--muted);max-width:34em}
+.house{display:block;width:100%;max-width:300px;height:auto;margin:0 auto .5rem}
+.panel{background:var(--paper);border:2px solid var(--line);border-radius:20px;padding:1.25rem}
+.count-big{font-family:"Alegreya",Georgia,serif;font-size:3.4rem;font-weight:800;color:var(--gable);line-height:1;margin:.5rem 0 0}
+input[type=range]{width:100%;accent-color:var(--gable);height:2rem;margin:.75rem 0}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.25rem 0 1rem}
+.chip{font:inherit;font-size:1rem;padding:.4rem .9rem;border-radius:999px;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--gable-soft);border-color:var(--gable)}
+.btn{font:inherit;font-weight:700;font-size:1.15rem;width:100%;padding:.9rem 1rem;border-radius:14px;border:none;background:var(--gable);color:var(--paper);cursor:pointer}
+.btn.secondary{background:transparent;color:var(--gable);border:2px solid var(--gable)}
+button:focus-visible{outline:3px solid var(--blossom-ink);outline-offset:3px}
+.topbar{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.4rem;color:var(--muted);font-size:1rem}
+.track{height:10px;border-radius:999px;background:var(--gable-soft);overflow:hidden;margin-bottom:1.25rem}
+.fill{height:100%;background:var(--gable);width:0;transition:width .3s}
+.q-text{font-size:1.45rem;font-weight:700;line-height:1.3;margin:0 0 1rem}
+.answers{display:grid;gap:.65rem}
+.ans{
+  font:inherit;text-align:left;display:flex;gap:.75rem;align-items:flex-start;
+  padding:.8rem .9rem;border-radius:14px;border:2px solid var(--line);
+  background:var(--paper);color:var(--ink);cursor:pointer;width:100%;
+}
+.ans:hover:not(:disabled){border-color:var(--gable)}
+.letter{flex:none;width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--gable-soft);color:var(--gable)}
+.ans.right{background:var(--gable-soft);border-color:var(--gable)}
+.ans.right .letter{background:var(--gable);color:var(--paper)}
+.ans.wrong{background:var(--wrong-soft);border-color:var(--wrong)}
+.ans.wrong .letter{background:var(--wrong);color:var(--paper)}
+.ans:disabled{cursor:default}
+.feedback{min-height:1.6em;margin:1rem 0 .75rem;font-weight:700}
+.feedback.ok{color:var(--gable)} .feedback.bad{color:var(--wrong)}
+.score-row{display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap}
+.result-num{font-family:"Alegreya",Georgia,serif;font-size:4rem;font-weight:800;color:var(--gable);line-height:1}
+.review{list-style:none;padding:0;margin:1rem 0}
+.review li{padding:.75rem 0;border-top:1px solid var(--line)}
+.review .q{font-weight:700}
+.review .yours{color:var(--wrong)} .review .good{color:var(--gable)}
+.stack{display:grid;gap:.6rem;margin-top:1rem}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<main>
+
+<section id="start">
+  <svg class="house" viewBox="0 0 300 150" aria-hidden="true">
+    <path d="M0 140 Q150 120 300 140 V150 H0Z" fill="var(--gable-soft)"/>
+    <rect x="70" y="70" width="140" height="70" fill="var(--wall)" stroke="var(--line)" stroke-width="2"/>
+    <polygon points="62,74 110,28 158,74" fill="var(--roof)"/>
+    <polygon points="122,74 170,28 218,74" fill="var(--roof)"/>
+    <rect x="98" y="54" width="22" height="16" fill="var(--blossom)"/>
+    <rect x="158" y="54" width="22" height="16" fill="var(--blossom)"/>
+    <rect x="128" y="102" width="24" height="38" fill="var(--roof)"/>
+    <rect x="86" y="96" width="24" height="20" fill="var(--blossom)"/>
+    <rect x="170" y="96" width="24" height="20" fill="var(--blossom)"/>
+    <rect x="245" y="95" width="6" height="45" fill="var(--muted)"/>
+    <circle cx="248" cy="82" r="24" fill="var(--blossom)"/>
+    <circle cx="232" cy="92" r="14" fill="var(--blossom)"/>
+    <circle cx="264" cy="92" r="14" fill="var(--blossom)"/>
+  </svg>
+  <h1>Ania z Zielonego Wzgórza</h1>
+  <p class="lead">Sprawdź, ile pamiętasz z lektury. Pytania są losowane z puli 100, a odpowiedzi za każdym razem stoją w innej kolejności.</p>
+
+  <div class="panel" style="margin-top:1.25rem">
+    <label for="count">Ile pytań chcesz?</label>
+    <p class="count-big" id="countOut">20</p>
+    <input type="range" id="count" min="10" max="100" step="1" value="20">
+    <div class="chips" role="group" aria-label="Szybki wybór">
+      <button class="chip" data-n="10">10</button>
+      <button class="chip" data-n="20" aria-pressed="true">20</button>
+      <button class="chip" data-n="30">30</button>
+      <button class="chip" data-n="50">50</button>
+      <button class="chip" data-n="100">Wszystkie 100</button>
+    </div>
+    <button class="btn" id="go">Zacznij quiz</button>
+  </div>
+</section>
+
+<section id="quiz" hidden>
+  <div class="topbar"><span id="pos">Pytanie 1 z 20</span><span id="pts">Punkty: 0</span></div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <div class="panel">
+    <p class="q-text" id="qText"></p>
+    <div class="answers" id="answers"></div>
+    <p class="feedback" id="fb" aria-live="polite"></p>
+    <button class="btn" id="next" hidden>Następne pytanie</button>
+  </div>
+  <div class="stack"><button class="btn secondary" id="quit">Zakończ i pokaż wynik</button></div>
+</section>
+
+<section id="end" hidden>
+  <div class="panel">
+    <h2 id="endTitle">Koniec quizu!</h2>
+    <div class="score-row"><span class="result-num" id="resNum">0</span><span id="resOf">/ 20</span></div>
+    <p id="resMsg"></p>
+    <div id="reviewWrap">
+      <h2 style="margin-top:1.25rem;font-size:1.3rem">Do powtórki</h2>
+      <ul class="review" id="review"></ul>
+    </div>
+    <div class="stack">
+      <button class="btn" id="again">Zagraj jeszcze raz</button>
+      <button class="btn secondary" id="home">Zmień liczbę pytań</button>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+// Format: [pytanie, poprawna, błędna, błędna, błędna]
+const Q = [
+["Kto napisał „Anię z Zielonego Wzgórza”?","Lucy Maud Montgomery","Astrid Lindgren","Frances Hodgson Burnett","Maria Konopnicka"],
+["Z jakiego kraju pochodziła autorka książki?","Z Kanady","Z Australii","Z Irlandii","Z Polski"],
+["Na jakiej wyspie leży Avonlea?","Na Wyspie Księcia Edwarda","Na Wyspie Wielkanocnej","Na Malcie","Na Islandii"],
+["Jak nazywała się farma rodzeństwa Cuthbertów?","Zielone Wzgórze","Srebrny Gaj","Słoneczna Dolina","Czerwony Dwór"],
+["W jakiej miejscowości leżało Zielone Wzgórze?","W Avonlea","W Charlottetown","W Carmody","W White Sands"],
+["Jak miała na imię siostra Mateusza Cuthberta?","Maryla","Małgorzata","Józefina","Diana"],
+["Kogo Cuthbertowie chcieli wziąć z sierocińca?","Chłopca do pomocy na farmie","Dziewczynkę do pomocy w kuchni","Dwoje rodzeństwa","Niemowlę"],
+["Ile lat miała Ania, gdy przyjechała do Avonlea?","11","8","14","16"],
+["Kto przyjechał po Anię na stację kolejową?","Mateusz","Maryla","Pani Linde","Diana"],
+["Dlaczego Maryla była zaskoczona na widok Ani?","Spodziewała się chłopca","Ania przyjechała zupełnie sama w nocy","Ania nie znała angielskiego","Ania była dorosła"],
+["Jak zachowywała się Ania w drodze ze stacji z Mateuszem?","Mówiła bez przerwy i zachwycała się widokami","Przespała całą drogę","Płakała przez całą drogę","Nie odezwała się ani słowem"],
+["Jaki kolor włosów miała Ania?","Rudy","Czarny","Jasny blond","Brązowy"],
+["Czego Ania nie lubiła u siebie oprócz koloru włosów?","Piegów","Okularów","Wysokiego wzrostu","Krzywych zębów"],
+["Jak Ania chciała, żeby ją nazywano?","Kordelia","Elżbieta","Gertruda","Wiktoria"],
+["Skąd przywieziono Anię do Avonlea?","Z sierocińca w Nowej Szkocji","Od babci z Anglii","Z internatu w Bostonie","Ze statku z Europy"],
+["Kto pośredniczył w sprowadzeniu Ani?","Pani Spencer","Pani Linde","Pani Barry","Panna Stacy"],
+["Gdzie urodziła się Ania?","W Bolingbroke w Nowej Szkocji","W Avonlea","W Londynie","W Toronto"],
+["Kim byli rodzice Ani?","Nauczycielami","Rolnikami","Marynarzami","Lekarzami"],
+["Co stało się z rodzicami Ani?","Zmarli na gorączkę, gdy była niemowlęciem","Wyjechali do Ameryki","Zaginęli na morzu","Oddali ją, bo byli biedni"],
+["U kogo Ania mieszkała najpierw po śmierci rodziców?","U pani Thomas","U pani Linde","U Barrych","U pani Allan"],
+["Ile par bliźniąt miała pani Hammond, u której mieszkała Ania?","Trzy","Jedną","Dwie","Pięć"],
+["Gdzie Ania znalazła wymyśloną przyjaciółkę, gdy mieszkała u pani Thomas?","W odbiciu w szybce szafki z książkami","Na księżycu","W studni","Pod mostem"],
+["Który z Cuthbertów od początku chciał zatrzymać Anię?","Mateusz","Maryla","Żadne z nich","Oboje od razu"],
+["Do kogo mogła trafić Ania, gdyby Maryla jej nie zatrzymała?","Do pani Blewett","Do pani Linde","Do panny Barry","Do pani Allan"],
+["Jaki pokój dostała Ania na Zielonym Wzgórzu?","Pokoik na poddaszu od wschodu","Salon na parterze","Kącik w kuchni","Pokój Mateusza"],
+["Jak Ania nazwała kwitnącą wiśnię za swoim oknem?","Królowa Śniegu","Biała Pani","Panna Młoda","Srebrna Gwiazda"],
+["Jakie imię Ania nadała pelargonii Maryli?","Bonny","Rosie","Lily","Daisy"],
+["Jak nazywała się wścibska sąsiadka Cuthbertów?","Pani Linde","Pani Barry","Pani Blewett","Pani Allan"],
+["Czym zajmowała się pani Linde, gdy nie obserwowała sąsiadów?","Robiła kołdry","Malowała obrazy","Grała na fortepianie","Hodowała konie"],
+["Jak zareagowała Ania, gdy pani Linde skomentowała jej wygląd?","Wybuchła złością i nakrzyczała na nią","Rozpłakała się i uciekła do lasu","Grzecznie podziękowała","Zaczęła się śmiać"],
+["Co Ania musiała zrobić po kłótni z panią Linde?","Przeprosić ją","Wyjechać z Avonlea","Sprzątać jej dom przez miesiąc","Napisać list do pastora"],
+["Jaka była Maryla na początku książki?","Surowa i powściągliwa","Rozpieszczająca i czuła","Roztargniona i wesoła","Leniwa"],
+["Jaki był Mateusz?","Nieśmiały i małomówny","Głośny i gadatliwy","Surowy i złośliwy","Chełpliwy"],
+["Czego Maryla nauczyła Anię, czego ta wcześniej nie robiła?","Wieczornej modlitwy","Czytania","Pisania","Liczenia"],
+["Czym Ania ozdobiła kapelusz, idąc pierwszy raz do kościoła?","Polnymi kwiatami","Piórami","Wstążkami Maryli","Muszelkami"],
+["Jakiego koloru ubrań Ania uważała, że rude nie mogą nosić?","Różowego","Zielonego","Białego","Niebieskiego"],
+["Kim była Diana Barry dla Ani?","Najlepszą przyjaciółką","Kuzynką","Siostrą","Nauczycielką"],
+["Jaki kolor włosów miała Diana?","Czarny","Rudy","Jasny blond","Siwy"],
+["Jak Ania nazywała ludzi, którzy ją rozumieli?","Bratnimi duszami","Dobrymi wróżkami","Cichymi sercami","Jasnymi gwiazdami"],
+["Co Ania i Diana zrobiły podczas pierwszego spotkania?","Przysięgły sobie wieczną przyjaźń","Pokłóciły się o lalkę","Uciekły z domu","Założyły szkołę"],
+["Czym Ania przez pomyłkę poczęstowała Dianę?","Winem porzeczkowym zamiast soku malinowego","Herbatą z solą","Kwaśnym mlekiem","Octem"],
+["Jak zareagowała pani Barry po tym poczęstunku?","Zabroniła Dianie przyjaźnić się z Anią","Zaprosiła Anię na obiad","Podziękowała Maryli","Wyjechała z Avonlea"],
+["Jak Ania odzyskała zaufanie pani Barry?","Uratowała chorą Minnie May","Upiekła jej tort","Znalazła jej zgubiony pierścionek","Wygrała dla niej konkurs"],
+["Na co zachorowała Minnie May?","Na krup","Na ospę","Na grypę","Na odrę"],
+["Skąd Ania wiedziała, jak pomóc choremu dziecku?","Opiekowała się wcześniej bliźniętami pani Hammond","Wyczytała to w gazecie","Nauczył ją lekarz","Nauczyła ją Maryla"],
+["Jakiego lekarstwa użyła Ania, ratując Minnie May?","Ipekakuany","Tranu","Miodu z cytryną","Syropu z cebuli"],
+["Kim była Minnie May?","Młodszą siostrą Diany","Kuzynką Ani","Córką pastora","Koleżanką z klasy"],
+["Kim była ciotka Diany, na której łóżko wskoczyły dziewczynki?","Panną Józefiną Barry","Panią Linde","Panną Stacy","Panią Thomas"],
+["Gdzie mieszkała panna Józefina Barry?","W Charlottetown","W Avonlea","W Londynie","W Bostonie"],
+["Na co Ania i Diana pojechały do Charlottetown?","Na wystawę","Na wesele","Na pogrzeb","Na mecz"],
+["Co Ania wymyśliła o lesie, przez który chodziła do Diany?","Że straszą w nim duchy","Że żyją w nim krasnoludki","Że jest w nim skarb","Że mieszka w nim smok"],
+["Jak Ania nazwała staw (jezioro) w drodze ze stacji?","Jezioro Lśniących Wód","Jezioro Łabędzie","Jezioro Snów","Srebrne Jezioro"],
+["Kim był Gilbert Blythe?","Kolegą ze szkoły","Bratem Diany","Synem pastora","Nauczycielem"],
+["Jak Gilbert przezwał Anię?","Marchewka","Piegusek","Wiewiórka","Pomidorek"],
+["Co zrobiła Ania, gdy Gilbert ją przezwał?","Rozbiła mu tabliczkę na głowie","Wylała na niego atrament","Rzuciła w niego jabłkiem","Poskarżyła się Maryli"],
+["Kto był pierwszym nauczycielem Ani w Avonlea?","Pan Phillips","Panna Stacy","Pastor Allan","Pan Bell"],
+["Za co pan Phillips ukarał Anię, sadzając ją obok Gilberta?","Za spóźnienie","Za ściąganie","Za rozmowy","Za złe pismo"],
+["Jak Ania zareagowała na karę siedzenia obok Gilberta?","Przestała chodzić do szkoły","Przeprosiła Gilberta","Zaprzyjaźniła się z nim","Przeniosła się do innej szkoły"],
+["Jaka nauczycielka bardzo pomogła Ani później?","Panna Stacy","Pani Linde","Panna Barry","Pani Spencer"],
+["Kim była Józia Pye?","Niemiłą koleżanką, która zazdrościła Ani","Najlepszą przyjaciółką Ani","Siostrą Gilberta","Nauczycielką"],
+["Kim był Charlie Sloane?","Kolegą ze szkoły, któremu podobała się Ania","Bratem Gilberta","Pastorem","Handlarzem"],
+["Kto namówił Anię do chodzenia po kalenicy dachu?","Józia Pye","Diana","Ruby Gillis","Gilbert"],
+["Po dachu czyjego domu chodziła Ania?","Barrych","Cuthbertów","Szkoły","Kościoła"],
+["Co stało się Ani po upadku z dachu?","Złamała nogę w kostce","Złamała rękę","Nic jej się nie stało","Straciła pamięć"],
+["Co zgubiła Maryla i myślała, że wzięła to Ania?","Broszkę z ametystem","Złoty pierścionek","Srebrną łyżeczkę","Perłowy naszyjnik"],
+["Dlaczego Ania przyznała się do zgubienia broszki, choć jej nie wzięła?","Chciała pójść na piknik","Bała się Mateusza","Chciała chronić Dianę","Myślała, że naprawdę ją zgubiła"],
+["Gdzie znalazła się broszka Maryli?","Zaczepiona o jej szal","Na dnie jeziora","W ogrodzie","W kieszeni Mateusza"],
+["Czego Ania najbardziej chciała spróbować na pikniku?","Lodów","Czekolady","Pomarańczy","Tortu"],
+["Co Ania dodała przez pomyłkę do ciasta dla pani Allan?","Lekarstwo przeciwbólowe zamiast wanilii","Sól zamiast cukru","Pieprz zamiast cynamonu","Ocet zamiast mleka"],
+["Kim była pani Allan?","Żoną pastora","Nauczycielką","Ciotką Diany","Siostrą Maryli"],
+["Co wpadło do sosu, który Ania zapomniała przykryć?","Mysz","Mucha","Żaba","Pająk"],
+["Na jaki kolor Ania chciała przefarbować włosy?","Na czarny","Na blond","Na brązowy","Na zielony"],
+["Jaki kolor wyszedł po farbowaniu włosów?","Zielony","Niebieski","Fioletowy","Pomarańczowy"],
+["Od kogo Ania kupiła farbę do włosów?","Od wędrownego handlarza","W aptece w Carmody","Od pani Linde","Od Józi Pye"],
+["Co trzeba było zrobić po nieudanym farbowaniu?","Krótko obciąć włosy","Zgolić głowę","Nosić perukę","Siedzieć rok w domu"],
+["Jaką postać odgrywała Ania, płynąc w łódce?","Elaine","Kopciuszka","Śpiącą Królewnę","Królową Śniegu"],
+["Co stało się z łódką, w której płynęła Ania?","Zaczęła przeciekać i tonąć","Wywróciła ją fala","Odpłynęła na morze","Zapaliła się"],
+["Kto uratował Anię z łódki?","Gilbert","Diana","Mateusz","Charlie Sloane"],
+["Czy Ania pogodziła się z Gilbertem zaraz po tym ratunku?","Nie, odmówiła jego przyjaźni","Tak, od razu","Tak, ale tylko na jeden dzień","Nie, bo Gilbert odpłynął"],
+["Jaki prezent dostała Ania od Mateusza na Gwiazdkę?","Sukienkę z bufiastymi rękawami","Książkę z wierszami","Lalkę","Łyżwy"],
+["Co Mateusz kupił ze wstydu, zamiast zapytać o materiał na sukienkę?","Grabie i cukier","Kapelusz i rękawiczki","Buty i mąkę","Lampę naftową"],
+["Kto pomógł Mateuszowi z sukienką dla Ani?","Pani Linde","Maryla","Diana","Pani Barry"],
+["Co założyła Ania razem z koleżankami?","Klub, w którym pisały opowiadania","Gazetę szkolną","Teatr kukiełkowy","Chór kościelny"],
+["Gdzie Ania recytowała wiersz przed bogatymi gośćmi?","Na koncercie w hotelu w White Sands","W kościele w Avonlea","W teatrze w Bostonie","Na wystawie w Charlottetown"],
+["Do jakiej szkoły przygotowywała Anię panna Stacy?","Do Akademii Królowej w Charlottetown","Do szkoły muzycznej","Do szkoły pielęgniarek","Do szkoły tańca"],
+["Które miejsce zajęła Ania na egzaminie wstępnym?","Pierwsze, razem z Gilbertem","Drugie","Ostatnie","Dziesiąte"],
+["Jaką nagrodę zdobyła Ania w Akademii Królowej?","Stypendium Avery’ego","Złoty medal","Puchar","Wycieczkę do Anglii"],
+["Co zdobył Gilbert w Akademii Królowej?","Złoty medal","Stypendium Avery’ego","Nagrodę sportową","Nic nie zdobył"],
+["Na co pozwalało Ani stypendium?","Na studia w college’u w Redmond","Na podróż do Europy","Na kupno farmy","Na wakacje nad morzem"],
+["Co sprawiło, że Mateusz zmarł?","Serce nie wytrzymało wiadomości o upadku banku","Spadł z konia","Utonął w jeziorze","Zachorował na grypę"],
+["Jak nazywał się bank, który upadł?","Bank Abbey","Bank Królewski","Bank Avonlea","Bank Kanady"],
+["Co zaczęło dolegać Maryli pod koniec książki?","Słabł jej wzrok","Straciła słuch","Złamała nogę","Zapomniała mówić"],
+["Co Maryla chciała zrobić z Zielonym Wzgórzem po śmierci Mateusza?","Sprzedać je","Oddać kościołowi","Zburzyć","Przerobić na szkołę"],
+["Dlaczego Ania zrezygnowała z wyjazdu na studia?","Chciała zostać z Marylą","Nie zdała egzaminów","Gilbert ją o to poprosił","Bała się dużego miasta"],
+["Co zrobił Gilbert, żeby pomóc Ani?","Oddał jej posadę nauczyciela w Avonlea","Kupił Zielone Wzgórze","Pożyczył jej pieniądze","Zawiózł Marylę do lekarza"],
+["Gdzie Gilbert miał uczyć zamiast w Avonlea?","W White Sands","W Charlottetown","W Carmody","W Toronto"],
+["Kim był dla Maryli ojciec Gilberta, gdy była młoda?","Jej dawną sympatią","Jej bratem","Jej lekarzem","Jej nauczycielem"],
+["Jak kończy się relacja Ani i Gilberta w tej książce?","Zostają przyjaciółmi","Nadal się kłócą","Biorą ślub","Przestają się znać"],
+["Ile lat ma Ania pod koniec książki?","Około 16","11","25","40"],
+["W którym roku po raz pierwszy wydano książkę?","1908","1858","1958","1998"]
+];
+
+const $ = id => document.getElementById(id);
+const L = ["A","B","C","D"];
+let deck=[], i=0, score=0, misses=[], n=20;
+
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]];}return a;}
+function show(id){["start","quiz","end"].forEach(s=>$(s).hidden=s!==id);window.scrollTo(0,0);}
+
+function setN(v){
+  n=Math.max(10,Math.min(Q.length,+v));
+  $("count").value=n; $("countOut").textContent=n;
+  document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(+c.dataset.n===n)));
+}
+$("count").max=Q.length;
+$("count").addEventListener("input",e=>setN(e.target.value));
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>setN(c.dataset.n)));
+
+function start(){
+  deck=shuffle(Q).slice(0,n).map(q=>({q:q[0],good:q[1],opts:shuffle(q.slice(1))}));
+  i=0;score=0;misses=[];
+  show("quiz");render();
+}
+function render(){
+  const cur=deck[i];
+  $("pos").textContent=`Pytanie ${i+1} z ${deck.length}`;
+  $("pts").textContent=`Punkty: ${score}`;
+  $("fill").style.width=(i/deck.length*100)+"%";
+  $("qText").textContent=cur.q;
+  $("fb").textContent="";$("fb").className="feedback";
+  $("next").hidden=true;
+  const box=$("answers");box.innerHTML="";
+  cur.opts.forEach((o,k)=>{
+    const b=document.createElement("button");
+    b.className="ans";b.dataset.val=o;
+    b.innerHTML=`<span class="letter">${L[k]}</span><span></span>`;
+    b.lastChild.textContent=o;
+    b.addEventListener("click",()=>pick(b));
+    box.appendChild(b);
+  });
+  box.firstChild.focus({preventScroll:true});
+}
+function pick(b){
+  const cur=deck[i];
+  const btns=[...$("answers").children];
+  if(btns[0].disabled)return;
+  btns.forEach(x=>{x.disabled=true;if(x.dataset.val===cur.good)x.classList.add("right");});
+  if(b.dataset.val===cur.good){
+    score++;$("fb").textContent="Dobrze!";$("fb").classList.add("ok");
+  }else{
+    b.classList.add("wrong");
+    $("fb").textContent="Niestety nie. Poprawna odpowiedź jest zaznaczona na zielono.";
+    $("fb").classList.add("bad");
+    misses.push({q:cur.q,yours:b.dataset.val,good:cur.good});
+  }
+  $("pts").textContent=`Punkty: ${score}`;
+  $("next").textContent=i===deck.length-1?"Zobacz wynik":"Następne pytanie";
+  $("next").hidden=false;$("next").focus({preventScroll:true});
+}
+function next(){i++; if(i>=deck.length)finish(); else render();}
+function finish(answered){
+  const total=answered??deck.length;
+  $("resNum").textContent=score;
+  $("resOf").textContent=`/ ${total}`;
+  const p=total?score/total:0;
+  $("resMsg").textContent=
+    p===1?"Bezbłędnie! Znasz tę książkę jak Ania swoje marzenia."
+    :p>=0.8?"Świetny wynik! Prawie wszystko pamiętasz."
+    :p>=0.6?"Dobrze! Kilka rzeczy warto jeszcze powtórzyć."
+    :p>=0.4?"Nieźle, ale lektura czeka na powtórkę."
+    :"Warto jeszcze raz zajrzeć do książki i spróbować ponownie.";
+  const ul=$("review");ul.innerHTML="";
+  $("reviewWrap").hidden=!misses.length;
+  misses.forEach(m=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<div class="q"></div><div class="yours"></div><div class="good"></div>`;
+    li.children[0].textContent=m.q;
+    li.children[1].textContent="Twoja odpowiedź: "+m.yours;
+    li.children[2].textContent="Poprawna: "+m.good;
+    ul.appendChild(li);
+  });
+  show("end");
+}
+$("go").addEventListener("click",start);
+$("next").addEventListener("click",next);
+$("quit").addEventListener("click",()=>{
+  const btns=[...$("answers").children];
+  const answered=i+(btns[0]&&btns[0].disabled?1:0);
+  finish(answered);
+});
+$("again").addEventListener("click",start);
+$("home").addEventListener("click",()=>show("start"));
+document.addEventListener("keydown",e=>{
+  if($("quiz").hidden)return;
+  const k=e.key.toUpperCase(), idx="ABCD".indexOf(k)>-1?"ABCD".indexOf(k):"1234".indexOf(k);
+  const btns=[...$("answers").children];
+  if(idx>-1&&btns[idx]&&!btns[idx].disabled)pick(btns[idx]);
+  else if(e.key==="Enter"&&!$("next").hidden&&document.activeElement!==$("next")){e.preventDefault();next();}
+});
+</script>
+</body>
+</html>
